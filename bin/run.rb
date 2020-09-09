@@ -4,7 +4,7 @@ app = GameApp.new
 
 app.run
 
-puts "HELLO WORLD"
+# puts "HELLO WORLD"
 
 ### To start our CLI
 #require_relative '../config/environment'
