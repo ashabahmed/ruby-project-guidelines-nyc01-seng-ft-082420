@@ -6,3 +6,9 @@ gem 'rake'
 gem 'require_all'
 gem 'sqlite3'
 gem 'pry'
+
+gem "colorize"
+gem "tty-prompt"
+gem "tty-box"
+gem "pastel"
+gem "tty-font"
