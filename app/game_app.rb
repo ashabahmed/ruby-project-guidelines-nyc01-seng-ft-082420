@@ -23,6 +23,7 @@ class GameApp
         puts "Enter Username: ".colorize(:yellow)
         input = gets.chomp
         @user = User.find_or_create_by(username: input)
+        # @user.points = 0
     end
 
     def select_difficulty
@@ -46,7 +47,7 @@ class GameApp
     end
 
     def easy_questions
-        puts "This is Easy".colorize(:green)
+        puts "This is Easy:".colorize(:green)
         sleep (3)
         eq = Question.easy_difficulty.shuffle[0..4]
         eq.each do |question|
@@ -55,7 +56,7 @@ class GameApp
     end
 
     def medium_questions
-        puts "This is Medium".colorize(:light_yellow)
+        puts "This is Medium:".colorize(:light_yellow)
         sleep (3)
         mq = Question.medium_difficulty.shuffle[0..4]
         mq.each do |question|
@@ -64,7 +65,7 @@ class GameApp
     end
 
     def hard_questions
-        puts "This is HARD!!".colorize(:red)
+        puts "This is HARD!:".colorize(:red)
         sleep(3)
         hq = Question.hard_difficulty.shuffle[0..4]
         hq.each do |question|
@@ -78,20 +79,26 @@ class GameApp
             qp = TTY::Prompt.new
             response = qp.select(question.question, question.get_choice)
             if response == question.correct
+                # if @user.points == nil 
+                #     @user.starting_points
+                # else
+                #     @user.add_points
+                # end
                 correct += 1 
             end
-            puts "You have #{correct}/#{@game.questions.count} correct".colorize(:magenta)
+            puts "You got #{correct}/#{@game.questions.count}!".colorize(:magenta)
             sleep(2)
         end
     end
 
     def play_again?
+        box = TTY::Box.frame "THANKS FOR PLAYING!", padding: 3, align: :center, border: :thick
         prompt = TTY::Prompt.new
         p_a = prompt.select("Would you like to play again?", ["Yes", "No"])
         if p_a == "Yes"
             select_difficulty
         else
-            "Thanks for playing"
+            puts box.colorize(:light_blue)
         end
     end
 end
