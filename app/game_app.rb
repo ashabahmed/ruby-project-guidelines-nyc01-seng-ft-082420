@@ -15,16 +15,11 @@ class GameApp
     end
 
     def welcome
-        box = TTY::Box.frame "Welcome to", "Soooo..", "YOU THINK YOU KNOW MOVIES?!", padding: 3, align: :center
-        puts box.colorize(:light_red).on_blue.underline
-        # puts "Sooo...YOU THINK YOU KNOW MOVIES?!"
-        # sleep(3)
-        # puts "Welcome!"
+        box = TTY::Box.frame "Welcome to", "YOU THINK YOU KNOW MOVIES?!", padding: 3, align: :center, border: :thick
+        puts box.colorize(:magenta)
     end
 
     def login
-        String.colors
-        binding.pry
         puts "Enter Username: ".colorize(:yellow)
         input = gets.chomp.to_s
         @user = User.find_or_create_by(username: input)
@@ -35,93 +30,24 @@ class GameApp
         level = %w(Easy Medium Hard)
         user_difficulty = prompt.select("Please select a level of Difficulty:", level)
         if user_difficulty == "Easy"
-            puts "This is Easy".colorize(:green)
-            sleep (3)
-            correct = 0
-            # start_game
             @game = Game.create(:user_id => @user.id, :difficulty => user_difficulty)
             easy_questions
-            # easy_questions.each do |question|
-            #     GameQuestion.create(:game_id => @game.id, :question_id => question.id)
-            # end
-            @game.questions.each do |question|
-                qp = TTY::Prompt.new
-                response = qp.select(question.question, question.get_choice)
-                if response == question.correct
-                    correct += 1
-                    # find a way to update the @game gamequstions that particular one. once you find it, you need to do something like @gamequetion.correct = true then @gamequestion.save
-                end
-                puts "You have #{correct}/#{@game.questions.count} correct".colorize(:blue)
-            end
-
-            play_again = prompt.select("Would you like to play again?", ["Yes", "No"])
-            if play_again == "Yes"
-                select_difficulty
-            else
-                puts "Thanks for playing"
-            end
+            questions_and_choices
         elsif user_difficulty == "Medium"
-            puts "This is Medium".colorize(:light_yellow)
-            sleep (3)
-            correct = 0
-            start_game 
+            @game = Game.create(:user_id => @user.id, :difficulty => user_difficulty)
             medium_questions
-            # medium_questions.each do |question|
-            #     GameQuestion.create(:game_id => @game.id, :question_id => question.id)
-            # end
-            @game.questions.each do |question|
-                qp = TTY::Prompt.new
-                response = qp.select(question.question, question.get_choice)
-                if response == question.correct
-                    correct += 1
-                    # find a way to update the @game gamequstions that particular one. once you find it, you need to do something like @gamequetion.correct = true then @gamequestion.save
-                end
-                puts "You have #{correct}/#{@game.questions.count} correct".colorize(:blue)
-            end
-
-            play_again = prompt.select("Would you like to play again?", ["Yes", "No"])
-            if play_again == "Yes"
-                select_difficulty
-            else
-                puts "Thanks for playing"
-            end
+            questions_and_choices
         else
-            puts "This is HARD!!".colorize(:red)
-            sleep (3)
-            correct = 0
-            start_game 
+            @game = Game.create(:user_id => @user.id, :difficulty => user_difficulty)
             hard_questions
-            # @game = Game.create(:user_id => @user.id, :difficulty => user_difficulty)
-            # hard_questions.each do |question|
-            #     GameQuestion.create(:game_id => @game.id, :question_id => question.id)
-            # end
-            # binding.pry
-            @game.questions.each do |question|
-                qp = TTY::Prompt.new
-                response = qp.select(question.question, question.get_choice)
-                if response == question.correct
-                    correct += 1
-                    # find a way to update the @game gamequstions that particular one. once you find it, you need to do something like @gamequetion.correct = true then @gamequestion.save
-                end
-                puts "You have #{correct}/#{@game.questions.count} correct".colorize(:blue)
-            end
-
-            play_again = prompt.select("Would you like to play again?", ["Yes", "No"])
-            if play_again == "Yes"
-                select_difficulty
-            else
-                puts "Thanks for playing"
-            end
-
+            questions_and_choices
         end
+        play_again?
     end
-    
-    # def start_game
-    #     @game = Game.create(:user_id => @user.id, :difficulty => user_difficulty)
-    # end
-    
+
     def easy_questions
-        # puts "This is Easy".colorize(:green)
+        puts "This is Easy".colorize(:green)
+        sleep (3)
         eq = Question.easy_difficulty.shuffle[0..4]
         eq.each do |question|
             GameQuestion.create(:game_id => @game.id, :question_id => question.id)
@@ -129,43 +55,44 @@ class GameApp
     end
 
     def medium_questions
-        # puts "This is Medium".colorize(:light_yellow)
+        puts "This is Medium".colorize(:light_yellow)
+        sleep (3)
         mq = Question.medium_difficulty.shuffle[0..4]
         mq.each do |question|
             GameQuestion.create(:game_id => @game.id, :question_id => question.id)
          end
     end
 
-    # def hard_questions
-    #    puts "This is HARD".colorize(:red)
-    #    puts Question.hard_difficulty.shuffle.first.question
-    # end
     def hard_questions
-        # puts "This is HARD!!".colorize(:red)
-        # sleep(3)
+        puts "This is HARD!!".colorize(:red)
+        sleep(3)
         hq = Question.hard_difficulty.shuffle[0..4]
         hq.each do |question|
             GameQuestion.create(:game_id => @game.id, :question_id => question.id)
          end
     end
 
+    def questions_and_choices
+        correct = 0
+        @game.questions.each do |question|
+            qp = TTY::Prompt.new
+            response = qp.select(question.question, question.get_choice)
+            if response == question.correct
+                correct += 1 
+            end
+            puts "You have #{correct}/#{@game.questions.count} correct".colorize(:magenta)
+            sleep(2)
+        end
+    end
 
-    # def questions(difficulty, question, answers)
-    #     choices = %w(answers)
-    #     prompt.multi_select(question, answers)
-    #     if correct
-    #         "Correct!"
-    #     else
-    #         "=("
-    #     end
-    # end
-    # def play_again
-    #     prompt.yes?("Would you like to play again?")
-    #     if yes
-
-    #         select_difficulty
-    #     else
-    #         "Thank you for playing"
-    #     end
-    # end
+    def play_again?
+        prompt = TTY::Prompt.new
+        p_a = prompt.select("Would you like to play again?", ["Yes", "No"])
+        if p_a == "Yes"
+            select_difficulty
+        else
+            "Thanks for playing"
+        end
+    end
 end
+# find a way to update the @game gamequstions that particular one. once you find it, you need to do something like @gamequetion.correct = true then @gamequestion.save
