@@ -21,7 +21,7 @@ class GameApp
 
     def login
         puts "Enter Username: ".colorize(:yellow)
-        input = gets.chomp.to_s
+        input = gets.chomp
         @user = User.find_or_create_by(username: input)
     end
 
