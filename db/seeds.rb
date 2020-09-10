@@ -19,7 +19,7 @@ q2 = Question.create(question: "Which 1994 film did Roger Ebert famously despise
 q3 = Question.create(question: "In Big Hero 6, what fictional city is the Big Hero 6 from?", difficulty: "easy", correct: "San Fransokyo", wrong_one: "San Tokyo", wrong_two: "Sankyo", wrong_three: "Tokysisco")
 q4 = Question.create(question: "Which 90's comedy cult classic features cameos appearances from Meat Loaf, Alice Cooper and Chris Farley?", difficulty: "medium", correct: "Wayne's World", wrong_one: "Bill & Ted's Excellent Adventure", wrong_two: "Dumb and Dumber", wrong_three: "Austin Powers: International Man of Mystery")
 q5 = Question.create(question: "Which sci-fi cult films plot concerns aliens attempting to prevent humans from creating a doomsday weapon?", difficulty: "hard", correct: "Plan 9 from Outer Space", wrong_one: "The Man from Planet X", wrong_two: "It Came from Outer Space", wrong_three: "The Day The Earth Stood Still")
-testing_game_questions = GameQuestion.create(game_id: game1.id, question_id: test_question1.id, correct: true)
+testing_game_questions = GameQuestion.create(game_id: game1.id, question_id: test_question.id, correct: true)
 
 # response = (JSON)
 # response = {}
