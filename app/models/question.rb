@@ -5,6 +5,15 @@ class Question < ActiveRecord::Base
     def self.hard_difficulty
         Question.all.select{|question| question.difficulty == "hard"}
     end
+    
+    def self.medium_difficulty
+        Question.all.select{|question| question.difficulty == "medium"}
+    end
+    
+    def self.easy_difficulty
+        Question.all.select{|question| question.difficulty == "easy"}
+    end
+
 
     def get_choice
         # binding.pry
