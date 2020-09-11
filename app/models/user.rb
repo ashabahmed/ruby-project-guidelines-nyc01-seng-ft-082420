@@ -1,13 +1,12 @@
 class User < ActiveRecord::Base
     has_many :games
-    # def delete_user
-    #     self.drop
-    # end
-    def starting_points
-        self.points = 100
+    
+    def delete_user
+        self.destroy
     end
-
+    
     def add_points
         self.increment(:points, 100)
+        self.save
     end
 end

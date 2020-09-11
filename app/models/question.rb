@@ -14,9 +14,7 @@ class Question < ActiveRecord::Base
         Question.all.select{|question| question.difficulty == "easy"}
     end
 
-
     def get_choice
-        # binding.pry
         choice_array = [self.correct, self.wrong_one, self.wrong_two, self.wrong_three].shuffle
     end
 end

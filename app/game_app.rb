@@ -11,7 +11,7 @@ class GameApp
     def run
         welcome
         login
-        select_difficulty
+        main_menu
     end
 
     def welcome
@@ -20,16 +20,37 @@ class GameApp
     end
 
     def login
-        puts "Enter Username: ".colorize(:yellow)
+        puts "Enter Username to login or sign-up: ".colorize(:yellow)
         input = gets.chomp
         @user = User.find_or_create_by(username: input)
-        # @user.points = 0
+        @user.points = 0
+        @user.save
+    end
+    
+    def main_menu
+        prompt = TTY::Prompt.new
+        choices = %w(Play Score Delete Exit)
+        selection = prompt.select("What would you like to do?", choices)
+        if selection == "Play"
+            select_difficulty
+        elsif selection == "Score" 
+            puts "You have #{@user.points} total points!".colorize(:green)
+            sleep(3)
+            main_menu
+        elsif selection == "Exit"
+            box = TTY::Box.frame "THANKS FOR PLAYING!", padding: 3, align: :center, border: :thick
+            puts box.colorize(:light_blue)
+        else selection == "Delete"
+            puts "Sorry to see you go! =("
+            sleep(2)
+            @user.delete_user
+        end
     end
 
     def select_difficulty
         prompt = TTY::Prompt.new
         level = %w(Easy Medium Hard)
-        user_difficulty = prompt.select("Please select a level of Difficulty:", level)
+        user_difficulty = prompt.select("Please select desired difficulty:", level)
         if user_difficulty == "Easy"
             @game = Game.create(:user_id => @user.id, :difficulty => user_difficulty)
             easy_questions
@@ -79,11 +100,7 @@ class GameApp
             qp = TTY::Prompt.new
             response = qp.select(question.question, question.get_choice)
             if response == question.correct
-                # if @user.points == nil 
-                #     @user.starting_points
-                # else
-                #     @user.add_points
-                # end
+                @user.add_points
                 correct += 1 
             end
             puts "You got #{correct}/#{@game.questions.count}!".colorize(:magenta)
@@ -99,7 +116,7 @@ class GameApp
             select_difficulty
         else
             puts box.colorize(:light_blue)
+            main_menu
         end
     end
 end
-# find a way to update the @game gamequstions that particular one. once you find it, you need to do something like @gamequetion.correct = true then @gamequestion.save
