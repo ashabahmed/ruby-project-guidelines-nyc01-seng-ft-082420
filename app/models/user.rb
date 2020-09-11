@@ -2,7 +2,7 @@ class User < ActiveRecord::Base
     has_many :games
     
     def delete_user
-        puts "Sorry to see you go! =("
+        puts "Sorry to see you go! =(".colorize(:red)
         sleep(2)
         self.destroy
     end
