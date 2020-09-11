@@ -23,8 +23,10 @@ class GameApp
         puts "Enter Username to login or sign-up: ".colorize(:yellow)
         input = gets.chomp
         @user = User.find_or_create_by(username: input)
-        @user.points = 0
-        @user.save
+        if @user.points == nil 
+            @user.points = 0
+            @user.save
+        end
     end
     
     def main_menu
@@ -35,14 +37,12 @@ class GameApp
             select_difficulty
         elsif selection == "Score" 
             puts "You have #{@user.points} total points!".colorize(:green)
-            sleep(3)
+            sleep(2)
             main_menu
         elsif selection == "Exit"
-            box = TTY::Box.frame "THANKS FOR PLAYING!", padding: 3, align: :center, border: :thick
+            box = TTY::Box.frame "THANKS FOR PLAYING!", "SEE YOU NEXT TIME!", padding: 3, align: :center, border: :thick
             puts box.colorize(:light_blue)
         else selection == "Delete"
-            puts "Sorry to see you go! =("
-            sleep(2)
             @user.delete_user
         end
     end
@@ -51,20 +51,22 @@ class GameApp
         prompt = TTY::Prompt.new
         level = %w(Easy Medium Hard)
         user_difficulty = prompt.select("Please select desired difficulty:", level)
+        @game = Game.create(:user_id => @user.id, :difficulty => user_difficulty)
+        start_game(user_difficulty)
+        play_again?
+    end
+
+    def start_game(user_difficulty)
         if user_difficulty == "Easy"
-            @game = Game.create(:user_id => @user.id, :difficulty => user_difficulty)
             easy_questions
             questions_and_choices
         elsif user_difficulty == "Medium"
-            @game = Game.create(:user_id => @user.id, :difficulty => user_difficulty)
             medium_questions
             questions_and_choices
         else
-            @game = Game.create(:user_id => @user.id, :difficulty => user_difficulty)
             hard_questions
             questions_and_choices
         end
-        play_again?
     end
 
     def easy_questions
@@ -100,7 +102,7 @@ class GameApp
             qp = TTY::Prompt.new
             response = qp.select(question.question, question.get_choice)
             if response == question.correct
-                @user.add_points
+                @user.add_points(@game.difficulty)
                 correct += 1 
             end
             puts "You got #{correct}/#{@game.questions.count}!".colorize(:magenta)
