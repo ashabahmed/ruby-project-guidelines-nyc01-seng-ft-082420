@@ -32,7 +32,7 @@ class GameApp
     def main_menu
         prompt = TTY::Prompt.new
         choices = %w(Play Score Delete Exit)
-        selection = prompt.select("What would you like to do?", choices)
+        selection = prompt.select("What would you like to do?", choices).colorize(:light_blue)
         if selection == "Play"
             select_difficulty
         elsif selection == "Score" 
